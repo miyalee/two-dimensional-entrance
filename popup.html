@@ -1,0 +1,101 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>极客公园－极客优选新闻爬取</title>
+    <script src="./popup_files/jquery.min.js"></script>
+
+    <style>
+        .item-list,
+        .toolbar {
+            width: 300px;
+        }
+
+        .item {
+            width: 100%;
+            padding: 8px 4px;
+
+            display: flex;
+            overflow: hidden;
+
+            border-bottom: 1px solid #ddd;
+
+            opacity: 0;
+            transition: opacity 1s ease-in;
+
+            cursor: pointer;
+        }
+
+        .item:hover {
+            background-color: #fbfbfb;
+        }
+
+        img {
+            width: 124px;
+            height: 160px;
+            margin-right: 10px;
+
+            flex: 1.5;
+        }
+
+        .content {
+            flex: 2;
+        }
+
+        .content > p {
+            font-size: 15px;
+        }
+
+        .content > p:last-child {
+            font-size: 14px;
+
+            color: #999;
+        }
+
+        /*.toolbar {
+            text-align: center;
+        }
+
+        .toolbar > button {
+            width: 100px;
+            height: 37px;
+
+            display: none;
+
+            font-size: 14px;
+
+            color: #999;
+            border: 1px solid #ddd;
+            background-color: #fff;
+
+            cursor: pointer;
+            outline: none;
+        }
+
+        .toolbar > button:hover {
+            color: #333;
+            border: 1px solid #333;
+        }*/
+        .errMsg,
+        .item-list .info {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <p class="errMsg" id="errMsg"></p>
+
+    <div class="item-list">
+        <div class="info" id="infoList">a</div>
+
+        <div class="video" id="videoList">
+        </div>
+    </div>
+
+    <p class="loading">loading...</p>
+</body>
+
+<script src="./popup_files/popup.js"></script>
+</html>
+

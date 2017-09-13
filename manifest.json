@@ -1,0 +1,23 @@
+{
+    "manifest_version": 2,
+
+    "name": "二次元入口",
+    "description": "抓取B站新番内容(｡･ω･｡)",
+    "version": "1.0",
+
+    "browser_action": {
+        "default_icon": "icon.png",
+        "default_popup": "popup.html"
+    },
+
+    "icons": {
+        "16": "icon.png",
+        "48": "icon.png"
+    },
+
+    "permissions": [
+        "tabs",
+        "https://bangumi.bilibili.com/*",
+        "https://www.bilibili.com/*"
+    ]
+}
