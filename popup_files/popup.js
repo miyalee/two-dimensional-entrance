@@ -1,20 +1,26 @@
 $(function() {
-    function App(url) {
+    "use strict"
+
+    function App() {
         this.api = {
             video: 'https://bangumi.bilibili.com/web_api/timeline_global',
             info: 'https://www.bilibili.com/index/catalogy/51-week.json'
         };
+
+        this.el_videoList = $('#videoList');
+        this.el_infoList = $('#infoList');
+        this.el_loading = $('.loading');
+        this.el_errMsg = $('#errMsg');
+        this.el_button = $('#toolbar button');
 
         return this.init();
     }
 
     App.prototype = {
         init: function() {
-            this.el_videoList = $('#videoList'),
-            this.el_loading = $('.loading'),
-            this.el_errMsg = $('#errMsg'),
-
             this.getData(this.api.video, this.getTodayVideo);
+            this.getData(this.api.info, this.getInfoListData);
+            this.bindClick();
         },
 
         getData: function(url, success) {
@@ -24,10 +30,9 @@ $(function() {
                 url: url,
                 type: 'GET',
                 success: function(res) {
-                    success.call(self, res);
-
                     self.el_loading.hide();
-                    self.el_errMsg.hide()
+
+                    success.call(self, res);
                 },
                 error: function() {
                     self.el_errMsg.text('电波发送失败啦(-_-#)').show();
@@ -35,69 +40,117 @@ $(function() {
             })
         },
 
-        getTodayVideo: function(res) {
+        getTodayVideo: function(data) {
             var self = this;
 
-            console.log(res);
+            if(data.code === 0) {
+                self.el_errMsg.hide()
 
-            if(res.code === 0) {
-                res.result.forEach(function(item, index) {
+                data.result.forEach(function(item, index) {
                     if(item.is_today === 1) {
-                        var el = self.generateDom(item);
-                        self.render(el);
+                        self.generateVideoDom(item);
                     }
                 });
             } else {
-                self.el_errMsg.text(res.message).show();
+                self.el_errMsg.text(data.message).show();
             }
         },
 
-        generateDom: function(data) {
-            var self = this,
-                dom = '';
+        getInfoListData: function(data) {
+            var self = this;
+
+            if(data.hot.code === 0) {
+                self.el_errMsg.hide()
+
+                self.generateInfoDom(data.hot.list);
+            } else {
+                self.el_errMsg.text('欢声笑语打出GG').show()
+            }
+        },
+
+        generateVideoDom: function(data) {
+            var self = this;
+            let dom = '';
 
             data.seasons.forEach(function(item, index) {
-                var pubIndex = '';
+                let pubIndex = '';
 
                 if(item.is_published === 1) {
                     pubIndex = '<p style="color: #fb7299">' + item.pub_index + '</p>';
                 } else {
-                    pubIndex = '<p>' + item.pub_index + '</p>';
+                    pubIndex = '<p style="color: #999">' + item.pub_index + '</p>';
                 }
 
-                dom += '<div class="item" id='+ item.season_id +'>' +
-                                '<img src="'+ item.cover +'">' +
-                                '<div class="content">' +
-                                    '<p>' + item.title +
-                                    '<p>' + data.date + '\t' + item.pub_time +'</p>' +
-                                    pubIndex +
-                                '</div>' +
-                          '</div>';
+                dom += `<div class="item" id= ${item.season_id}>
+                            <img src="${item.cover}">
+                            <div class="content">
+                                <p>${item.title}</p>
+                                <p>${data.date}\t${item.pub_time}</p>
+                                ${pubIndex}
+                            </div>
+                        </div>`;
             })
 
-            return dom;
+            self.render(dom, self.el_videoList);
         },
 
-        render: function(dom) {
-            // var self = this;
+        generateInfoDom: function(data) {
+            var self = this;
+            let dom = '';
 
-            this.el_videoList.append(dom);
+            data.forEach(function(item, index) {
+                dom += `<div class="item" id= ${item.aid}>
+                            <img src="${item.pic}">
+                            <div class="content">
+                                <p>${item.title}</p>
+                            </div>
+                        </div>`;
+            })
 
-            setTimeout(function() {
-                $('.item').css('opacity', 1);
-            }, 100)
+            self.render(dom, self.el_infoList);
+        },
 
-            this.bindClick()
+        render: function(dom, box) {
+            box.empty().append(dom);
+
+            setTimeout(() => $('.item').css('opacity', 1), 100)
+        },
+
+        createTab: function(url) {
+            chrome.tabs.create({
+                url: url
+            })
         },
 
         bindClick: function() {
             var self = this;
 
             this.el_videoList.on('click', '.item', function(){
-                chrome.tabs.create({
-                    url: 'https://bangumi.bilibili.com/anime/' + $(this).attr('id')
-                })
+                self.createTab('https://bangumi.bilibili.com/anime/' + $(this).attr('id'))
             })
+
+            this.el_infoList.on('click', '.item', function(){
+                self.createTab('https://www.bilibili.com/video/av' + $(this).attr('id'))
+            })
+
+            this.el_button.each(function(index, button){
+                $(button).on('click', function() {
+                    $('#' + $(this).attr('data-tab')).show();
+                    $('#' + $(this).attr('data-tab')).siblings().hide()
+
+                    $(this).css({
+                        'color': '#fff',
+                        'border-color': '#fb7299',
+                        'background-color': '#fb7299'
+                    })
+
+                    $(this).siblings().css({
+                        'color': '#999',
+                        'border-color': '#ddd',
+                        'background-color': '#fff'
+                    })
+                })
+            });
         }
     }
 

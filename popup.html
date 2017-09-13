@@ -30,12 +30,20 @@
             background-color: #fbfbfb;
         }
 
-        img {
-            width: 124px;
+        .video img {
             height: 160px;
+            width: 124px;
             margin-right: 10px;
 
             flex: 1.5;
+        }
+
+        .info img {
+            height: 80px;
+            width: 124px;
+            margin-right: 10px;
+
+            flex: 1;
         }
 
         .content {
@@ -48,19 +56,18 @@
 
         .content > p:last-child {
             font-size: 14px;
-
-            color: #999;
         }
 
-        /*.toolbar {
+        .toolbar {
             text-align: center;
+
+            padding: 10px 0 15px 0;
+            border-bottom: 1px solid #ddd;
         }
 
         .toolbar > button {
-            width: 100px;
-            height: 37px;
-
-            display: none;
+            width: 80px;
+            height: 30px;
 
             font-size: 14px;
 
@@ -72,10 +79,21 @@
             outline: none;
         }
 
+        .toolbar > button:first-child {
+            position: relative;
+            left: 4px;
+
+            border-right: none;
+            border-color: #fb7299;
+
+            color: #fff;
+            background-color: #fb7299;
+        }
+
         .toolbar > button:hover {
-            color: #333;
-            border: 1px solid #333;
-        }*/
+            color: #00a1d6;
+        }
+
         .errMsg,
         .item-list .info {
             display: none;
@@ -86,10 +104,16 @@
 <body>
     <p class="errMsg" id="errMsg"></p>
 
-    <div class="item-list">
-        <div class="info" id="infoList">a</div>
+    <div class="toolbar" id="toolbar">
+        <button data-tab="videoList">番表</button>
+        <button data-tab="infoList">资讯</button>
+    </div>
 
+    <div class="item-list">
         <div class="video" id="videoList">
+        </div>
+
+        <div class="info" id="infoList">
         </div>
     </div>
 
